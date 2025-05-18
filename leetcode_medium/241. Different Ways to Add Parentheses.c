@@ -1,36 +1,56 @@
-/*
-Time complexity : O(4^N)
-Space complexity : O(2N)
-
-*/
 
 
-// open stands for (   and  close stands for )
-void backtrack(char** result, int* returnSize, char* path, int pos, int open, int close, int n){
-    if ( open == n && close == n ){
-        path[pos] = '\0';
-        result[*returnSize] = strdup(path);
-        (* returnSize) ++;
-        return;
-    }
-    if (open < n) {
-        path[pos] = '(';
-        backtrack(result, returnSize, path, pos + 1, open + 1, close, n);
-    }
-    if (close < open) {
-        path[pos] = ')';
-        backtrack(result, returnSize, path, pos + 1, open, close + 1, n);
-    }
+int applyOp(int a, int b, char op) {
+    if (op == '+') return a + b;
+    if (op == '-') return a - b;
+    if (op == '*') return a * b;
+    return 0;
 }
 
+int isOperator(char c) {
+    return c == '+' || c == '-' || c == '*';
+}
 
-char** generateParenthesis(int n, int* returnSize) {
+int* diffWaysToCompute(char* expression, int* returnSize) {
 
+    int n = strlen(expression);
+    int capacity = 100;
+    int* result = (int*)malloc(sizeof(int) * capacity);
     *returnSize = 0;
-    int maxSize = 1 << (2 * n);  //
-    char** output=(char**)malloc(sizeof(char*)*maxSize);
-    char* path = (char*)malloc(sizeof(char)*(2*n+1));
-    backtrack(output, returnSize, path, 0, 0, 0, n);
-    free(path);
-    return output;    
+    
+    for (int i = 0; i < n; i++) {
+        if (isOperator(expression[i])) {
+            char left[32], right[32];
+            strncpy(left, expression, i);
+            left[i] = '\0';
+            strcpy(right, expression + i + 1);
+
+            int leftSize = 0, rightSize = 0;
+            int* leftResults = diffWaysToCompute(left, &leftSize);
+            int* rightResults = diffWaysToCompute(right, &rightSize);
+
+            for (int li = 0; li < leftSize; li++) {
+                for (int ri = 0; ri < rightSize; ri++) {
+                    if (*returnSize >= capacity) {
+                        capacity *= 2;
+                        result = (int*)realloc(result, sizeof(int) * capacity);
+                    }
+                    result[*returnSize] = applyOp(leftResults[li], rightResults[ri], expression[i]);
+                    (*returnSize)++;
+                }
+            }
+            free(leftResults);
+            free(rightResults);
+        }
+    }
+
+
+    // if expression contains only digit => return the number
+    if (*returnSize == 0) {
+        int num = atoi(expression);
+        result[0] = num;
+        *returnSize = 1;
+    }
+    
+    return result;
 }
