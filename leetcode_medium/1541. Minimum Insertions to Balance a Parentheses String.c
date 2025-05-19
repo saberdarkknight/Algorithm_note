@@ -4,45 +4,31 @@ Time complexity : O(N)
 Space complexity : O(1)
 */
 
+int minInsertions(char* s) {
 
-void swap(char* s, int left, int right) {
-    while (left < right) {
-        char tmp = s[left];
-        s[left] = s[right];
-        s[right] = tmp;
-        left++;
-        right--;
+    int depth = 0; // Total insertions needed
+    int right = 0; // Number of ')' we need
+
+    for ( int i = 0; s[i]!= '\0'; i ++){
+        if ( s[i] =='('){
+            right += 2;
+            if (right % 2 == 1) {
+                // Make even by inserting 1 ')'
+                depth++;
+                right--;
+            }
+        } else {
+            right--;
+            if (right < 0) {
+                // Need to insert one '('
+                depth++;
+                right = 1;  // Because one ')' already used, we still need one more
+            }
+
+        }
+        
     }
-}
 
-char* reverseParentheses(char* s) {
+    return depth + right ;
     
-    // start process of the s
-    int size = strlen(s);
-    int left_stack [size];
-    int left_size = 0; 
-    int left_pos = 0;
-    int right_pos = 0;
-
-    // add stack and index
-    for ( int i = 0; s[i] != '\0'; i ++){
-        if ( s[i] == '(' ){
-            left_stack [left_size++] = i;
-        } else if ( s[i] == ')' ){
-            left_pos = left_stack[--left_size];
-            right_pos = i;
-            swap(s, left_pos + 1, right_pos - 1);
-        }
-    }
-
-    // make new string
-    char output[size+1];
-    int cur_index = 0;
-    for (int i = 0; i < size; i ++){
-        if ( (s[i]!='(') && (s[i]!=')') ){
-            output[cur_index++] = s[i];
-        }
-    }
-    output[cur_index] = '\0';
-    return output;
 }
