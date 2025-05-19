@@ -1,8 +1,51 @@
 /*
 
 Time complexity : O(N)
-Space complexity : O(1)
+Space complexity : O(N)
 
+
+*/
+
+
+// My attempt
+struct ListNode* rotateRight(struct ListNode* head, int k) {
+
+    // check the early return condition
+    if (!head || !head->next || k == 0){
+        return head;    
+    } 
+
+    // check the size of linklist
+    struct ListNode* total[501];
+    struct ListNode* ptr = head;
+    int index = 0;
+    while( ptr!=NULL ){
+        total[index++] = ptr;
+        ptr = ptr->next;
+    }
+
+    // check shift number
+    int shift = k%index;
+    if (shift == 0) {
+        return head;
+    }
+
+    // start shifting
+    total[index - 1]->next = head; 
+    struct ListNode* newHead = total[index - shift];
+    total[index - shift -1]->next = NULL;
+
+    return newHead;
+}
+
+
+
+
+// Better approach
+/*
+
+Time complexity : O(N)
+Space complexity : O(1)
 
 */
 
