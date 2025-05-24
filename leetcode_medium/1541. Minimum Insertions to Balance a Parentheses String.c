@@ -5,30 +5,23 @@ Space complexity : O(1)
 */
 
 int minInsertions(char* s) {
-
-    int depth = 0; // Total insertions needed
+    int insert = 0; // Total insertions needed, this can be ( or )
     int right = 0; // Number of ')' we need
-
     for ( int i = 0; s[i]!= '\0'; i ++){
         if ( s[i] =='('){
             right += 2;
             if (right % 2 == 1) {
                 // Make even by inserting 1 ')'
-                depth++;
+                insert++;
                 right--;
             }
         } else {
             right--;
             if (right < 0) {
-                // Need to insert one '('
-                depth++;
+                insert++; // Need to insert one '('
                 right = 1;  // Because one ')' already used, we still need one more
             }
-
         }
-        
     }
-
-    return depth + right ;
-    
+    return insert + right ;
 }
